@@ -860,7 +860,7 @@ process_preprocessed_file(struct mdfour *hash, const char *path, bool pump)
 			}
 			inc_path = make_relative_path(inc_path);
 
-			bool should_hash_inc_path = true;
+			bool should_hash_inc_path = false;
 			if (!conf->hash_dir) {
 				char *cwd = gnu_getcwd();
 				if (str_startswith(inc_path, cwd) && str_endswith(inc_path, "//")) {
@@ -1686,6 +1686,25 @@ calculate_object_hash(struct args *args, struct mdfour *hash, int direct_mode)
 
 	// First the arguments.
 	for (int i = 1; i < args->argc; i++) {
+		if (i < args->argc-1 && str_eq(args->argv[i], "-c") && is_clang) {
+			i++;
+			continue;
+		}
+		if (i < args->argc-1 && str_eq(args->argv[i], "-o") && is_clang) {
+			i++;
+			continue;
+		}
+		if (i < args->argc-1 && str_eq(args->argv[i], "-index-store-path") && is_clang) {
+			i++;
+			continue;
+		}
+		if (str_startswith(args->argv[i], "-F") && is_clang) {
+			continue;
+		}
+		if (i < args->argc-1 && str_eq(args->argv[i], "--serialize-diagnostics") && is_clang) {
+			i++;
+			continue;
+		}
 		// -L doesn't affect compilation (except for clang).
 		if (i < args->argc-1 && str_eq(args->argv[i], "-L") && !is_clang) {
 			i++;
@@ -2581,8 +2600,8 @@ cc_process_args(struct args *args, struct args **preprocessor_args,
 				result = false;
 				goto out;
 			}
-			generating_diagnostics = true;
-			output_dia = make_relative_path(x_strdup(argv[i+1]));
+			//generating_diagnostics = true;
+			//output_dia = make_relative_path(x_strdup(argv[i+1]));
 			i++;
 			continue;
 		}

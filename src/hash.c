@@ -70,6 +70,7 @@ hash_equal(struct mdfour *md1, struct mdfour *md2)
 void
 hash_delimiter(struct mdfour *md, const char *type)
 {
+  //printf("Hash: %s\n", type);
 	hash_buffer(md, HASH_DELIMITER, sizeof(HASH_DELIMITER));
 	hash_buffer(md, type, strlen(type) + 1); // Include NUL.
 }
@@ -77,6 +78,7 @@ hash_delimiter(struct mdfour *md, const char *type)
 void
 hash_string(struct mdfour *md, const char *s)
 {
+  //printf("Hash: %s\n", s);
 	hash_string_length(md, s, strlen(s));
 }
 
